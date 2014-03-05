@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Chromecast Demo Presentation</string>
+    <string name="action_mediaroute">Cast</string>
+
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+</resources>

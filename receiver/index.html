@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Presentation</title>
+    <link rel="stylesheet" type="text/css" href="presentation.css">
+    <script src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+    <script type="text/javascript">
+        var images = ["slide1.png", "slide2.png", "slide3.png"];
+        var currentImageIndex = null;
+
+         window.onload = function() {
+            cast.receiver.logger.setLevelValue(cast.receiver.LoggerLevel.DEBUG);
+
+            var img = document.getElementById('placeholder');
+            window.mediaManager = new cast.receiver.MediaManager(img);
+            window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
+
+            window.castReceiverManager.onReady = function(event) {
+                img.src = 'img/' + images[0];
+                img.alt = 'slide';
+                currentImageIndex = 0;
+                console.log("ready");
+            };
+
+            window.castReceiverManager.onSenderConnected = function(event) {
+                console.log("connected");
+            };
+
+            window.castReceiverManager.onSenderDisconnected = function(event) {
+                if (window.castReceiverManager.getSenders().length === 0) {
+                    window.castReceiverManager.stop();
+                }
+                console.log("disconnected");
+            };
+
+            window.messageBus = window.castReceiverManager.getCastMessageBus('urn:x-cast:de.inovex.chromecast.demopresentation');
+            window.messageBus.onMessage = function(event) {
+                if (event.data === 'next') {
+                    currentImageIndex = (currentImageIndex + 1) % images.length;
+                } else if (event.data === 'previous') {
+                    currentImageIndex = (currentImageIndex + images.length - 1) % images.length;
+                } else {
+                    console.log('Invalid message command: ' + event.data);
+                }
+                img.src = 'img/' + images[currentImageIndex];
+            }
+
+            window.castReceiverManager.start();
+        }
+    </script>
+</head>
+<body>
+<img id="placeholder" />
+</body>
+</html>
